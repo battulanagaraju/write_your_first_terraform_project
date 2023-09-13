@@ -28,7 +28,7 @@ locals {
   account_id    = data.aws_caller_identity.current.account_id
 }
 
-resource "aws_s3_bucket" "terraform_state" {
+resource "terras3bucket-12" "terraform_state" {
   # With account id, this S3 bucket names can be *globally* unique.
   bucket = "${local.account_id}-terraform-states"
 
@@ -60,5 +60,19 @@ resource "aws_dynamodb_table" "terraform_lock" {
   attribute {
     name = "LockID"
     type = "S"
+  }
+}
+#------------------------------------------------------------------------------
+#CREATE TERRAFORM S3 BACKEND
+#------------------------------------------------------------------------------
+
+terraform {
+  backend "s3" {
+    bucket         = "terras3bucket-12"
+    key            = "some_environment/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    kms_key_id     = "THE_ID_OF_THE_KMS_KEY"
+    dynamodb_table = "THE_ID_OF_THE_DYNAMODB_TABLE_NAG"
   }
 }
